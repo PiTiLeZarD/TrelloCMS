@@ -5,6 +5,7 @@
     "devDependencies": {
         "@11ty/eleventy": "^0.12.1",
         "dotenv": "^10.0.0",
+        "slug": "^5.0.1",
         "trello": "^0.10.0"
     },
     "scripts": {
