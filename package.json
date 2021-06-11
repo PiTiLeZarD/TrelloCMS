@@ -1,0 +1,14 @@
+{
+    "name": "TrelloCRM",
+    "version": "1.0.0",
+    "license": "MIT",
+    "devDependencies": {
+        "@11ty/eleventy": "^0.12.1",
+        "dotenv": "^10.0.0",
+        "trello": "^0.10.0"
+    },
+    "scripts": {
+        "trello": "node src/trello.mjs",
+        "11ty": "eleventy"
+    }
+}
