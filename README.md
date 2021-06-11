@@ -1,6 +1,6 @@
-# TrelloCRM
+# TrelloCMS
 
-TrelloCRM is a concept for now. Just trying to suss out if I can use Trello and eleventy to generate a static website
+TrelloCMS is a concept for now. Just trying to suss out if I can use Trello and eleventy to generate a static website
 
 For now, create a .env file with:
 
