@@ -1,5 +1,5 @@
 node_modules
-_site
+dist
 .env
 .DS_Store
 trello

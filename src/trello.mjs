@@ -11,6 +11,10 @@ const asyncFunc = async (promise) => {
     }
 };
 
+if (!fs.existsSync("trello")) {
+    fs.mkdirSync("trello");
+}
+
 const {
     parsed: { TRELLO_API_KEY, TRELLO_TOKEN, TRELLO_BOARD_ID },
 } = dotenv.config();
