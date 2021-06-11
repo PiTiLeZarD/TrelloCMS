@@ -27,7 +27,7 @@ Each column is a page, you should have an Index column. Page names are slugged s
 
 Each card is a block on that page.
 
-You can create a trello template which will be stored as a nunjucks fragment. Any card that has a label with the name of that template will be using it.
+You can create trello templates in a column called "templates" which will be stored as a nunjucks fragment. Any card that has a label with the name of that template will be using it. Also you can override the default main template by creating a template card with the name "main"
 
 TODO: I will try to gather all the styles of all templates/blocks and create one site.css minified styles (maybe same with javascript?)
 TODO: use trello images and reference to that

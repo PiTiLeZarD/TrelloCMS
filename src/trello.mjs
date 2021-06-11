@@ -15,6 +15,8 @@ const asyncFunc = async (promise) => {
 if (!fs.existsSync("trello")) {
     fs.mkdirSync("trello");
     fs.mkdirSync("trello/_includes");
+}
+if (!fs.existsSync("trello/_includes/fragments")) {
     fs.mkdirSync("trello/_includes/fragments");
 }
 
@@ -33,16 +35,20 @@ const useTemplate = (card) =>
         `{% include "fragments/${slug(card.labels[0].name)}.njk" %}`,
     ].join("\n");
 
-lists.map(async (list, li) => {
-    const { data: cards } = await asyncFunc(Trello.getCardsOnList(list.id));
+const persistTemplates = (list, cards) =>
+    cards.map((card, ci) => {
+        if (card.isTemplate) {
+            const templateName =
+                card.name == "main" ? "trello/_includes/main.njk" : `trello/_includes/fragments/${slug(card.name)}.njk`;
+            fs.writeFileSync(templateName, card.desc);
+        }
+    });
+
+const persistPage = (list, cards) => {
     let html = ["---", "layout: main.njk", `title: ${list.name}`, "---"];
 
     html = html.concat(
         cards.map((card, ci) => {
-            if (card.isTemplate) {
-                fs.writeFileSync(`trello/_includes/fragments/${slug(card.name)}.njk`, card.desc);
-                return "";
-            }
             if (card.labels.length > 0) {
                 return useTemplate(card);
             }
@@ -51,4 +57,13 @@ lists.map(async (list, li) => {
     );
 
     fs.writeFileSync(`trello/${slug(list.name)}.md`, html.join("\n"));
+};
+
+lists.map(async (list, li) => {
+    const { data: cards } = await asyncFunc(Trello.getCardsOnList(list.id));
+    if (slug(list.name) == "templates") {
+        return persistTemplates(list, cards);
+    }
+
+    return persistPage(list, cards);
 });
