@@ -3,6 +3,7 @@ import trello from "trello";
 import fs from "fs";
 import slug from "slug";
 import parse from "htmldom";
+import https from "https";
 
 const asyncFunc = async (promise) => {
     try {
@@ -13,12 +14,8 @@ const asyncFunc = async (promise) => {
     }
 };
 
-if (!fs.existsSync("trello")) {
-    fs.mkdirSync("trello");
-    fs.mkdirSync("trello/_includes");
-}
 if (!fs.existsSync("trello/_includes/fragments")) {
-    fs.mkdirSync("trello/_includes/fragments");
+    fs.mkdirSync("trello/_includes/fragments", { recursive: true });
 }
 
 const {
@@ -47,7 +44,7 @@ const extract = (html, tag) => {
     return css.join("\n");
 };
 
-const excludeCSS = (html) => html.replace(/<style.*>[\w\W]{1,}(.*?)[\w\W]{1,}<\/style>/gim, "");
+const stripCSS = (html) => html.replace(/<style.*>[\w\W]{1,}(.*?)[\w\W]{1,}<\/style>/gim, "");
 
 const persistTemplates = (list, cards) =>
     cards.map((card, ci) => {
@@ -57,7 +54,28 @@ const persistTemplates = (list, cards) =>
             if (css) {
                 fs.writeFileSync(`trello/_includes/${templateName}.css`, css);
             }
-            fs.writeFileSync(`trello/_includes/${templateName}.njk`, excludeCSS(card.desc));
+            fs.writeFileSync(`trello/_includes/${templateName}.njk`, stripCSS(card.desc));
+
+            if (card.badges.attachments > 0) {
+                const path = `trello/resources/${card.name}`;
+                if (!fs.existsSync(path)) {
+                    fs.mkdirSync(path, { recursive: true });
+                }
+                Trello.makeRequest("get", `/1/cards/${card.id}/attachments`).then((attachments) => {
+                    attachments.map(({ fileName, url }) => {
+                        if (!fs.existsSync(`${path}/${fileName}`)) {
+                            const download = fs.createWriteStream(`${path}/${fileName}`);
+                            https.get(url, (res) => {
+                                res.pipe(download);
+                                download.on("finish", () => {
+                                    download.close();
+                                    console.log(`Download Completed [${card.name}/${fileName}]`);
+                                });
+                            });
+                        }
+                    });
+                });
+            }
         }
     });
 

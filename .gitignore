@@ -5,3 +5,4 @@ dist
 trello/*.md
 trello/**/*.css
 trello/_includes/fragments/*
+trello/resources
