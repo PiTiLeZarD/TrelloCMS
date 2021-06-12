@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import trello from "trello";
 import fs from "fs";
 import slug from "slug";
+import parse from "htmldom";
 
 const asyncFunc = async (promise) => {
     try {
@@ -31,16 +32,32 @@ const { data: lists } = await asyncFunc(Trello.getListsOnBoard(TRELLO_BOARD_ID))
 const useTemplate = (card) =>
     [
         `{% set title = "${card.name}" %}`,
-        `{% set content = '${escape(card.desc)}' %}`,
+        `{% set content %}`,
+        card.desc,
+        `{% endset %}`,
         `{% include "fragments/${slug(card.labels[0].name)}.njk" %}`,
     ].join("\n");
+
+const extract = (html, tag) => {
+    const css = [];
+    const $ = parse(html);
+    $("style").each((_, style) => {
+        css.push(style.textContent);
+    });
+    return css.join("\n");
+};
+
+const excludeCSS = (html) => html.replace(/<style.*>[\w\W]{1,}(.*?)[\w\W]{1,}<\/style>/gim, "");
 
 const persistTemplates = (list, cards) =>
     cards.map((card, ci) => {
         if (card.isTemplate) {
-            const templateName =
-                card.name == "main" ? "trello/_includes/main.njk" : `trello/_includes/fragments/${slug(card.name)}.njk`;
-            fs.writeFileSync(templateName, card.desc);
+            const templateName = card.name == "main" ? "main" : `fragments/${slug(card.name)}`;
+            const css = extract(card.desc, "style");
+            if (css) {
+                fs.writeFileSync(`trello/_includes/${templateName}.css`, css);
+            }
+            fs.writeFileSync(`trello/_includes/${templateName}.njk`, excludeCSS(card.desc));
         }
     });
 
