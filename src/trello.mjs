@@ -46,6 +46,23 @@ const extract = (html, tag) => {
 
 const stripCSS = (html) => html.replace(/<style.*>[\w\W]{1,}(.*?)[\w\W]{1,}<\/style>/gim, "");
 
+const downloadAttachments = (card, path) => {
+    Trello.makeRequest("get", `/1/cards/${card.id}/attachments`).then((attachments) => {
+        attachments.map(({ fileName, url }) => {
+            if (!fs.existsSync(`${path}/${fileName}`)) {
+                const download = fs.createWriteStream(`${path}/${fileName}`);
+                https.get(url, (res) => {
+                    res.pipe(download);
+                    download.on("finish", () => {
+                        download.close();
+                        console.log(`Download Completed [${card.name}/${fileName}]`);
+                    });
+                });
+            }
+        });
+    });
+};
+
 const persistTemplates = (list, cards) =>
     cards.map((card, ci) => {
         if (card.isTemplate) {
@@ -61,20 +78,7 @@ const persistTemplates = (list, cards) =>
                 if (!fs.existsSync(path)) {
                     fs.mkdirSync(path, { recursive: true });
                 }
-                Trello.makeRequest("get", `/1/cards/${card.id}/attachments`).then((attachments) => {
-                    attachments.map(({ fileName, url }) => {
-                        if (!fs.existsSync(`${path}/${fileName}`)) {
-                            const download = fs.createWriteStream(`${path}/${fileName}`);
-                            https.get(url, (res) => {
-                                res.pipe(download);
-                                download.on("finish", () => {
-                                    download.close();
-                                    console.log(`Download Completed [${card.name}/${fileName}]`);
-                                });
-                            });
-                        }
-                    });
-                });
+                downloadAttachments(card, path);
             }
         }
     });
@@ -84,6 +88,7 @@ const persistPage = (list, cards) => {
 
     html = html.concat(
         cards.map((card, ci) => {
+            downloadAttachments(card, "trello/resources");
             if (card.labels.length > 0) {
                 return useTemplate(card);
             }
