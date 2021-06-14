@@ -47,6 +47,14 @@ const extract = (html, tag) => {
 const stripCSS = (html) => html.replace(/<style.*>[\w\W]{1,}(.*?)[\w\W]{1,}<\/style>/gim, "");
 
 const downloadAttachments = (card, path) => {
+    if (card.badges.attachments == 0) {
+        return;
+    }
+
+    if (!fs.existsSync(path)) {
+        fs.mkdirSync(path, { recursive: true });
+    }
+
     Trello.makeRequest("get", `/1/cards/${card.id}/attachments`).then((attachments) => {
         attachments.map(({ fileName, url }) => {
             if (!fs.existsSync(`${path}/${fileName}`)) {
@@ -73,13 +81,7 @@ const persistTemplates = (list, cards) =>
             }
             fs.writeFileSync(`trello/_includes/${templateName}.njk`, stripCSS(card.desc));
 
-            if (card.badges.attachments > 0) {
-                const path = `trello/resources/${card.name}`;
-                if (!fs.existsSync(path)) {
-                    fs.mkdirSync(path, { recursive: true });
-                }
-                downloadAttachments(card, path);
-            }
+            downloadAttachments(card, `trello/resources/${card.name}`);
         }
     });
 
