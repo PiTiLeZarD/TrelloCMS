@@ -1,9 +1,12 @@
 const fg = require("fast-glob");
 const fs = require("fs");
 const CleanCSS = require("clean-css");
+const eleventyNavigationPlugin = require("@11ty/eleventy-navigation");
 
 module.exports = (config) => {
     config.setUseGitIgnore(false);
+
+    config.addPlugin(eleventyNavigationPlugin);
 
     config.addPassthroughCopy("trello/resources");
 
