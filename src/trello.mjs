@@ -86,16 +86,29 @@ const persistTemplates = (list, cards) =>
     });
 
 const persistPage = (list, cards) => {
-    let html = ["---", "layout: main.njk", `title: ${list.name}`, "---"];
+    let frontmatter = { layout: "main.njk", title: list.name };
 
-    html = html.concat(
+    let html = Array.prototype.concat(
         cards.map((card, ci) => {
             downloadAttachments(card, "trello/resources");
             if (card.labels.length > 0) {
                 return useTemplate(card);
             }
+            if (slug(card.name) == "frontmatter") {
+                card.desc
+                    .split("\n")
+                    .map((fmd) => (([key, value]) => (frontmatter[key] = value))(fmd.split(/:[ ]?(.*)/)));
+                return "";
+            }
             return `# ${card.name}\n\n` + card.desc;
         })
+    );
+
+    html = Array.prototype.concat(
+        ["---"],
+        Object.keys(frontmatter).map((key) => `${key}: ${frontmatter[key]}`),
+        ["---"],
+        html
     );
 
     fs.writeFileSync(`trello/${slug(list.name)}.md`, html.join("\n"));
