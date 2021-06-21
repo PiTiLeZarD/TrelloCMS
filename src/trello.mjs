@@ -36,12 +36,12 @@ const useTemplate = (card) =>
     ].join("\n");
 
 const extract = (html, tag) => {
-    const css = [];
+    const elts = [];
     const $ = parse(html);
-    $("style").each((_, style) => {
-        css.push(style.textContent);
+    $(tag).each((_, elt) => {
+        elts.push(elt.textContent);
     });
-    return css.join("\n");
+    return elts.join("\n");
 };
 
 const stripCSS = (html) => html.replace(/<style.*>[\w\W]{1,}(.*?)[\w\W]{1,}<\/style>/gim, "");
