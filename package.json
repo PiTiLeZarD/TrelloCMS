@@ -4,12 +4,12 @@
     "license": "MIT",
     "devDependencies": {
         "@11ty/eleventy": "^0.12.1",
-        "@11ty/eleventy-navigation": "^0.2.0",
-        "clean-css": "^5.1.2",
+        "@11ty/eleventy-navigation": "^0.3.2",
+        "clean-css": "^5.1.3",
         "dotenv": "^10.0.0",
-        "fast-glob": "^3.2.5",
+        "fast-glob": "^3.2.7",
         "htmldom": "^4.0.11",
-        "slug": "^5.0.1",
+        "slug": "^5.1.0",
         "trello": "^0.10.0"
     },
     "scripts": {
