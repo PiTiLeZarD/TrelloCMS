@@ -12,17 +12,17 @@ TRELLO_TOKEN=
 TRELLO_BOARD_ID=
 ```
 
-Get your key/token from https://trello.com/app-key
+The setup process will help you fill this up.
 
 ## Setup your board
 
-The app comes with a rudimentary helper to setup your board for a basic website
+The app comes with a rudimentary helper to setup your environment variables and board for a basic website
 
 ```
 docker run --rm --env-file .env pitilezard/trello-cms setup
 ```
 
-Will tell you all you need to know
+This will walk you through what you should be doing and will create the lists and cards for a basic setup
 
 ## Run it
 
@@ -30,6 +30,16 @@ Get to the directory you want to generate your website in and run:
 
 ```
 docker run -v "`pwd`:/app/dist" --rm --env-file .env pitilezard/trello-cms
+```
+
+## Setup in your project
+
+You can use a bashscript or yarn/npm to run this. I use yarn this way:
+
+```
+    "scripts": {
+        "build": "docker run -v \"`pwd`/docs:/app/dist\" --rm --env-file .env pitilezard/trello-cms",
+    }
 ```
 
 # Trello Board

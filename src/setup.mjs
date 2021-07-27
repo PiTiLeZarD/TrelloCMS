@@ -2,11 +2,35 @@ import trello from "trello";
 import { asyncFunc } from "./utils.mjs";
 
 const { TRELLO_API_KEY, TRELLO_TOKEN, TRELLO_BOARD_ID } = process.env;
+
+if (!TRELLO_API_KEY) {
+    console.log("Missing environment variable TRELLO_API_KEY");
+    console.log("You can retrive it from here: https://trello.com/app-key");
+    process.exit(1);
+}
+
+if (!TRELLO_TOKEN) {
+    console.log("Missing environment variable TRELLO_TOKEN");
+    console.log("Please authorise this app using this link:");
+    console.log(
+        `https://trello.com/1/authorize?expiration=never&name=TrelloCMS&scope=read&response_type=token&key=${TRELLO_API_KEY}`
+    );
+    process.exit(2);
+}
+
+if (!TRELLO_BOARD_ID) {
+    console.log("Missing environment variable TRELLO_BOARD_ID");
+    console.log("You can find it in the URL when your browsing on your board");
+    console.log("eg: https://trello.com/b/[BoardID]/[NameOfTheBoard]");
+    process.exit(3);
+}
+
 const Trello = new trello(TRELLO_API_KEY, TRELLO_TOKEN);
 
 const data = await asyncFunc(Trello.getListsOnBoard(TRELLO_BOARD_ID));
 if (data == undefined || data.error) {
-    throw new Error("Could not find the board selected, check your environment variables");
+    console.log("Could not find the board selected, check your environment variables");
+    process.exit(4);
 }
 
 const lists = data.data.map((list, i) => list.name);
@@ -145,3 +169,5 @@ And here showing that you can reuse code with templates
     console.log("/!\\ not working, please add the label block manually");
     // await asyncFunc(Trello.addLabelToCard(exbl3Id, blockLabelId));
 }
+
+console.log("Please authorize this app ");
