@@ -145,6 +145,3 @@ And here showing that you can reuse code with templates
     console.log("/!\\ not working, please add the label block manually");
     // await asyncFunc(Trello.addLabelToCard(exbl3Id, blockLabelId));
 }
-
-/** Have a trello folder which is ready to start (optional caching of that folder?) */
-/** docker run --rm -v "`pwd`/../:/app" --env-file ../.env trello-cms */

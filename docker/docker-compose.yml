@@ -3,7 +3,7 @@ version: "3.8"
 services:
     trello:
         container_name: trellocms
-        image: trello-cms:latest
+        image: pitilezard/trello-cms:latest
         build:
             context: ..
             dockerfile: docker/Dockerfile
