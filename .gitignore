@@ -2,7 +2,3 @@ node_modules
 dist
 .env
 .DS_Store
-trello/*.md
-trello/**/*.css
-trello/_includes/fragments/*
-trello/resources

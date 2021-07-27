@@ -1,26 +1,15 @@
-import dotenv from "dotenv";
 import trello from "trello";
 import fs from "fs";
 import slug from "slug";
 import parse from "htmldom";
 import https from "https";
-
-const asyncFunc = async (promise) => {
-    try {
-        const data = await promise;
-        return { data };
-    } catch (error) {
-        return { error };
-    }
-};
+import { asyncFunc } from "./utils.mjs";
 
 if (!fs.existsSync("trello/_includes/fragments")) {
     fs.mkdirSync("trello/_includes/fragments", { recursive: true });
 }
 
-const {
-    parsed: { TRELLO_API_KEY, TRELLO_TOKEN, TRELLO_BOARD_ID },
-} = dotenv.config();
+const { TRELLO_API_KEY, TRELLO_TOKEN, TRELLO_BOARD_ID } = process.env;
 
 const Trello = new trello(TRELLO_API_KEY, TRELLO_TOKEN);
 
@@ -97,6 +86,7 @@ const persistPage = (list, cards) => {
             if (slug(card.name) == "frontmatter") {
                 card.desc
                     .split("\n")
+                    .filter((elt) => elt.trim())
                     .map((fmd) => (([key, value]) => (frontmatter[key] = value))(fmd.split(/:[ ]?(.*)/)));
                 return "";
             }
