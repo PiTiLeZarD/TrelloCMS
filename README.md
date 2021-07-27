@@ -1,27 +1,40 @@
 # TrelloCMS
 
-TrelloCMS is a concept for now. Just trying to suss out if I can use Trello and eleventy to generate a static website
+TrelloCMS is website building using 11ty to generate a website which content is taken from Trello.
 
-For now, create a .env file with:
+## Prerequisites
+
+Create a .env file with:
 
 ```
-TRELLO_API_KEY=""
-TRELLO_TOKEN=""
-TRELLO_BOARD_ID=""
+TRELLO_API_KEY=
+TRELLO_TOKEN=
+TRELLO_BOARD_ID=
 ```
 
 Get your key/token from https://trello.com/app-key
 
-Then run
+## Setup your board
+
+The app comes with a rudimentary helper to setup your board for a basic website
 
 ```
-yarn trello
-yarn 11ty --serve
+docker run --rm --env-file .env pitilezard/trello-cms setup
 ```
 
-Et voila!
+Will tell you all you need to know
+
+## Run it
+
+Get to the directory you want to generate your website in and run:
+
+```
+docker run -v "`pwd`:/app/dist" --rm --env-file .env pitilezard/trello-cms
+```
 
 # Trello Board
+
+This doesn't replace a proper doc, but for now here is the idea:
 
 Each column is a page, you should have an Index column. Page names are slugged so you can name them anything.
 
